@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Weather App</title>
+  <style>
+    body {
+      background: #1e1e1e;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Weather Checker</h1>
+
+  <!-- Input for city name -->
+  <input type="text" id="cityInput" placeholder="Enter city name" />
+
+  <!-- Button to check weather -->
+  <button onclick="getWeather()">Check Weather</button>
+
+  <!-- Place to show weather result -->
+  <div id="result"></div>
+
+  <script>
+    // Function to fetch weather when button is clicked
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value.trim(); 
+
+      if (!city) {
+        alert("Please enter a city name");
+        return;
+      }
+
+      
+      const apiKey = "63e4bcd5719819b781e0cdafa105a8ed"; 
+
+      // API URL (uses template literals with backticks)
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${apiKey}`;
+
+      try {
+        // Fetch weather data
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Check if city is not found
+        if (data.cod === "404") {
+          document.getElementById("result").innerHTML = "City not found!";
+          return;
+        }
+
+        // Extract weather data
+        const temp = data.main.temp;
+        const desc = data.weather[0].description;
+        const icon = data.weather[0].icon;
+
+        // Create icon URL
+        const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
+        // Display weather
+        document.getElementById("result").innerHTML = `
+          <h2>${city.toUpperCase()}</h2>
+          <img src="${iconUrl}" alt="Weather icon">
+          <p><strong>${temp}°C</strong> - ${desc}</p>
+        `;
+      } catch (error) {
+        document.getElementById("result").innerHTML = "Error fetching data!";
+        console.error("Fetch error:", error); // Log error for debugging
+      }
+    }
+  </script>
+
+</body>
+</html
